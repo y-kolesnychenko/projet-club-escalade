@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"organizer", "category"})
 public class Excursion {
 
     @Id
@@ -17,16 +18,16 @@ public class Excursion {
     private Long id;
 
     @Column(nullable = false)
-    String name;
+    private String name;
 
     @Column(nullable = false)
-    String description;
+    private String description;
 
     @Column(nullable = true)
-    String webSite;
+    private String webSite;
 
     @Column(nullable = false)
-    LocalDate date;
+    private LocalDate date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
