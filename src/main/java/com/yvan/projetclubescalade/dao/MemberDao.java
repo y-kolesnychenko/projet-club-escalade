@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface MemberDao extends GenericDao<Member,Long>{
     Optional<Member> findByIdWithExcursions(Long id);
+    List<Member> findByName(String name);
     List<Member> findByNameWithExcursions(String name);
     Optional<Member> findByEmail(String email);
 }

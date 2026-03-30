@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface CategoryDao extends GenericDao<Category, Long>{
     Optional<Category> findByIdWithExcursions(Long Id);
     List<Category> findByNameWithExcursions(String name);
+    List<Category> findByName(String name);
 }
