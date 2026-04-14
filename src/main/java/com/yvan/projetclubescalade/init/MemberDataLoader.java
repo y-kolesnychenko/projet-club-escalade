@@ -34,7 +34,9 @@ public class MemberDataLoader {
     }
 
     public String generateEmail(String prenom, String nom, int index) {
-        return prenom.toLowerCase() + "." + nom.toLowerCase() + index + "@club-escalade.fr";
+        String cleanPrenom = prenom.toLowerCase().replaceAll("[^a-z]", "");
+        String cleanNom = nom.toLowerCase().replaceAll("[^a-z]", "");
+        return cleanPrenom + "." + cleanNom + index + "@club-escalade.fr";
     }
 
     private List<String> loadPrenoms() throws Exception {
