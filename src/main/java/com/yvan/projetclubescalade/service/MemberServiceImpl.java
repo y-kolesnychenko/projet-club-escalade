@@ -4,6 +4,7 @@ package com.yvan.projetclubescalade.service;
 import com.yvan.projetclubescalade.dao.MemberDao;
 import com.yvan.projetclubescalade.model.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +17,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberDao memberDao;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<Member> findAll() {
@@ -30,6 +31,9 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public Member save(Member member) {
+        if (member.getId() == null){
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+        }
         return memberDao.save(member);
     }
 

@@ -8,8 +8,10 @@ import com.yvan.projetclubescalade.model.Excursion;
 import com.yvan.projetclubescalade.model.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -29,6 +31,9 @@ public class DataInitializer implements CommandLineRunner {
 
     private final MemberDataLoader memberDataLoader;
     private final CategoryDataLoader categoryDataLoader;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private final Random random = new Random();
 
@@ -89,14 +94,14 @@ public class DataInitializer implements CommandLineRunner {
         admin.setFirstname("Admin");
         admin.setLastname("ESCALADE");
         admin.setEmail("admin@club-escalade.fr");
-        admin.setPassword("admin123");
+        admin.setPassword(passwordEncoder.encode("admin123"));
         members.add(memberDao.save(admin));
 
         Member fixedUser = new Member();
         fixedUser.setFirstname("Jean");
         fixedUser.setLastname("DUPONT");
         fixedUser.setEmail("jean.dupont@club-escalade.fr");
-        fixedUser.setPassword("user123");
+        fixedUser.setPassword(passwordEncoder.encode("user123"));
         members.add(memberDao.save(fixedUser));
 
         for (int i = 0; i < NB_MEMBERS; i++) {
@@ -107,7 +112,7 @@ public class DataInitializer implements CommandLineRunner {
             member.setFirstname(prenom);
             member.setLastname(nom);
             member.setEmail(memberDataLoader.generateEmail(prenom, nom, i));
-            member.setPassword("password" + i);
+            member.setPassword(passwordEncoder.encode("pass"));
             members.add(memberDao.save(member));
         }
         log.info("{} membres créés", members.size());
