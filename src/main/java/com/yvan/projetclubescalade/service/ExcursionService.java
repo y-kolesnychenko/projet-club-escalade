@@ -1,0 +1,20 @@
+package com.yvan.projetclubescalade.service;
+
+import com.yvan.projetclubescalade.model.Excursion;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+public interface ExcursionService {
+
+    List<Excursion> findAll();
+    Optional<Excursion> findById(Long id);
+    Excursion save(Excursion excursion);
+    void deleteById(Long id);
+    List<Excursion> findByCategoryId(Long id);
+    List<Excursion> findByOrganizerId(Long id);
+    List<Excursion> search(String name, Long categoryId, LocalDate startDate,
+                           LocalDate endDate, String keyword);
+
+}
