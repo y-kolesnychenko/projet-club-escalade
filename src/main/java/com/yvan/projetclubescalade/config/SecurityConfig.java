@@ -27,7 +27,7 @@ public class SecurityConfig {
             config.requestMatchers(
                     "/", "/categories", "/categories/**",
                     "/excursions", "/excursions/search", "/excursions/detail/**",
-                    "/h2-console/**", "/webjars/**", "/css/**"
+                    "/h2-console/**", "/webjars/**", "/css/**", "/forgot-password"
             ).permitAll();
             // Reste des pages
             config.anyRequest().authenticated();

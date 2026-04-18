@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8"%>
 <hr>
 <footer>
     <p>Projet Club Escalade - KOLESNYCHENKO Yvan - 2026</p>
