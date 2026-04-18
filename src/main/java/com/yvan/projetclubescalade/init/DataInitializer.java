@@ -84,6 +84,21 @@ public class DataInitializer implements CommandLineRunner {
         log.info("{} catégories créées", categories.size());
 
         List<Member> members = new ArrayList<>();
+
+        Member admin = new Member();
+        admin.setFirstname("Admin");
+        admin.setLastname("ESCALADE");
+        admin.setEmail("admin@club-escalade.fr");
+        admin.setPassword("admin123");
+        members.add(memberDao.save(admin));
+
+        Member fixedUser = new Member();
+        fixedUser.setFirstname("Jean");
+        fixedUser.setLastname("DUPONT");
+        fixedUser.setEmail("jean.dupont@club-escalade.fr");
+        fixedUser.setPassword("user123");
+        members.add(memberDao.save(fixedUser));
+
         for (int i = 0; i < NB_MEMBERS; i++) {
             String prenom = memberDataLoader.randomPrenom();
             String nom = memberDataLoader.randomNom();
