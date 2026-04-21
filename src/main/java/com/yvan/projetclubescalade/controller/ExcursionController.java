@@ -99,6 +99,14 @@ public class ExcursionController {
             return mav;
         }
 
+        if (categoryId == null) {
+            result.rejectValue("category", "category.required", "Catégorie obligatoire");
+            var mav = new ModelAndView("excursion-form");
+            mav.addObject("categories", categoryService.findAll());
+            mav.addObject("isNew", true);
+            return mav;
+        }
+
         var member = memberService.findByEmail(principal.getName());
         if (member.isEmpty()) {
             return new ModelAndView("redirect:/");
@@ -141,6 +149,14 @@ public class ExcursionController {
             var mav = new ModelAndView("excursion-form");
             mav.addObject("categories", categoryService.findAll());
             mav.addObject("isNew", false);
+            return mav;
+        }
+
+        if (categoryId == null) {
+            result.rejectValue("category", "category.required", "Catégorie obligatoire");
+            var mav = new ModelAndView("excursion-form");
+            mav.addObject("categories", categoryService.findAll());
+            mav.addObject("isNew", true);
             return mav;
         }
 
