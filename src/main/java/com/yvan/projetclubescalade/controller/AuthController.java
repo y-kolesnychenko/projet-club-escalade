@@ -2,6 +2,8 @@ package com.yvan.projetclubescalade.controller;
 
 import com.yvan.projetclubescalade.model.Member;
 import com.yvan.projetclubescalade.service.MemberService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
@@ -80,5 +82,36 @@ public class AuthController {
         redirectAttributes.addFlashAttribute("successMessage",
                 "Un email avec un mot de passe temporaire a été envoyé à " + email);
         return "redirect:/login";
+    }
+
+    @GetMapping("/register")
+    public ModelAndView registerPage(){
+        return new ModelAndView("register", "member", new Member());
+    }
+
+    @PostMapping("/register")
+    public String handleRegister(@RequestParam("firstname") String firstname,
+                                 @RequestParam("lastname") String lastname,
+                                 @RequestParam("email") String email,
+                                 @RequestParam("password") String password,
+                                 RedirectAttributes redirectAttributes,
+                                 HttpServletRequest request) {
+        if (memberService.findByEmail(email).isPresent()){
+            redirectAttributes.addFlashAttribute("errorMessage", "Un compte existe déjà avec cet email.");
+            return "redirect:/register";
+        }
+
+        Member member = new Member();
+        member.setFirstname(firstname);
+        member.setLastname(lastname);
+        member.setEmail(email);
+        member.setPassword(password);
+        memberService.register(member);
+        try {
+            request.login(email, password);
+        } catch (ServletException e) {
+            log.error("Erreur connexion auto : ", e);
+        }
+        return "redirect:/";
     }
 }

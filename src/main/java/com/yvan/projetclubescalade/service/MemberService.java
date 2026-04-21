@@ -15,5 +15,6 @@ public interface MemberService {
     List<Member> findByName(String name);
     List<Member> findByNameWithExcursions(String name);
     Optional<Member> findByEmail(String email);
+    Member register(Member member);
 
 }

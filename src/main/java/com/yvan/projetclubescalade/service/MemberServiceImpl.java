@@ -61,4 +61,10 @@ public class MemberServiceImpl implements MemberService{
     public Optional<Member> findByEmail(String email) {
         return memberDao.findByEmail(email);
     }
+
+    @Override
+    public Member register(Member member){
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        return memberDao.save(member);
+    }
 }

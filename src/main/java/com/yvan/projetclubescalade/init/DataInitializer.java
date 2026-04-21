@@ -1,17 +1,15 @@
 package com.yvan.projetclubescalade.init;
 
-import com.yvan.projetclubescalade.dao.CategoryDao;
-import com.yvan.projetclubescalade.dao.ExcursionDao;
-import com.yvan.projetclubescalade.dao.MemberDao;
 import com.yvan.projetclubescalade.model.Category;
 import com.yvan.projetclubescalade.model.Excursion;
 import com.yvan.projetclubescalade.model.Member;
+import com.yvan.projetclubescalade.service.CategoryService;
+import com.yvan.projetclubescalade.service.ExcursionService;
+import com.yvan.projetclubescalade.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -25,15 +23,12 @@ import java.util.Random;
 @Profile("dev")
 public class DataInitializer implements CommandLineRunner {
 
-    private final CategoryDao categoryDao;
-    private final MemberDao memberDao;
-    private final ExcursionDao excursionDao;
+    private final CategoryService categoryService;
+    private final MemberService memberService;
+    private final ExcursionService excursionService;
 
     private final MemberDataLoader memberDataLoader;
     private final CategoryDataLoader categoryDataLoader;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     private final Random random = new Random();
 
@@ -84,7 +79,7 @@ public class DataInitializer implements CommandLineRunner {
         for (String name : categoryNames) {
             Category category = new Category();
             category.setName(name);
-            categories.add(categoryDao.save(category));
+            categories.add(categoryService.save(category));
         }
         log.info("{} catégories créées", categories.size());
 
@@ -94,15 +89,15 @@ public class DataInitializer implements CommandLineRunner {
         admin.setFirstname("Admin");
         admin.setLastname("ESCALADE");
         admin.setEmail("admin@club-escalade.fr");
-        admin.setPassword(passwordEncoder.encode("admin123"));
-        members.add(memberDao.save(admin));
+        admin.setPassword("admin123");
+        members.add(memberService.register(admin));
 
         Member fixedUser = new Member();
         fixedUser.setFirstname("Jean");
         fixedUser.setLastname("DUPONT");
         fixedUser.setEmail("jean.dupont@club-escalade.fr");
-        fixedUser.setPassword(passwordEncoder.encode("user123"));
-        members.add(memberDao.save(fixedUser));
+        fixedUser.setPassword("user123");
+        members.add(memberService.register(fixedUser));
 
         for (int i = 0; i < NB_MEMBERS; i++) {
             String prenom = memberDataLoader.randomPrenom();
@@ -112,8 +107,8 @@ public class DataInitializer implements CommandLineRunner {
             member.setFirstname(prenom);
             member.setLastname(nom);
             member.setEmail(memberDataLoader.generateEmail(prenom, nom, i));
-            member.setPassword(passwordEncoder.encode("pass"));
-            members.add(memberDao.save(member));
+            member.setPassword("pass");
+            members.add(memberService.register(member));
         }
         log.info("{} membres créés", members.size());
 
@@ -125,7 +120,7 @@ public class DataInitializer implements CommandLineRunner {
             excursion.setDate(LocalDate.now().plusDays(random.nextInt(365) - 180));
             excursion.setOrganizer(members.get(random.nextInt(members.size())));
             excursion.setCategory(categories.get(random.nextInt(categories.size())));
-            excursionDao.save(excursion);
+            excursionService.save(excursion);
         }
         log.info("{} excursions créées", NB_EXCURSIONS);
 

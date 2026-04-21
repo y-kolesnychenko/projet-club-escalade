@@ -25,7 +25,7 @@
         <button type="submit">Se connecter</button>
     </p>
 </form>
-
+<p><a href="<c:url value='/register' />">Pas encore de compte ? S'inscrire</a></p>
 <p><a href="<c:url value='/forgot-password' />">Mot de passe oublié ?</a></p>
 
 <%@ include file="footer.jsp" %>
