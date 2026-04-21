@@ -38,13 +38,13 @@
 
 <c:if test="${results != null}">
     <hr>
-    <h2>${results.size()} résultat(s)</h2>
+    <h2>${results.totalElements} résultat(s)</h2>
 
-    <c:if test="${empty results}">
+    <c:if test="${results.totalElements == 0}">
         <p>Aucune sortie ne correspond à vos critères.</p>
     </c:if>
 
-    <c:if test="${not empty results}">
+    <c:if test="${results.totalElements > 0}">
         <table border="1">
             <thead>
                 <tr>
@@ -56,7 +56,7 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach items="${results}" var="excursion">
+                <c:forEach items="${results.content}" var="excursion">
                     <tr>
                         <td><c:out value="${excursion.name}" /></td>
                         <td><c:out value="${excursion.category.name}" /></td>
@@ -69,6 +69,26 @@
                 </c:forEach>
             </tbody>
         </table>
+
+        <p>Page ${results.number + 1} / ${results.totalPages}</p>
+        <p>
+            <c:if test="${results.number > 0}">
+                <a href="<c:url value='/excursions/search?name=${searchName}&categoryId=${searchCategoryId}&startDate=${searchStartDate}&endDate=${searchEndDate}&keyword=${searchKeyword}&page=${results.number - 1}' />">Précédent</a> |
+            </c:if>
+            <c:forEach begin="0" end="${results.totalPages - 1}" var="i">
+                <c:choose>
+                    <c:when test="${i == results.number}">
+                        <strong>${i + 1}</strong>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="<c:url value='/excursions/search?name=${searchName}&categoryId=${searchCategoryId}&startDate=${searchStartDate}&endDate=${searchEndDate}&keyword=${searchKeyword}&page=${i}' />">${i + 1}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+            <c:if test="${results.number < results.totalPages - 1}">
+                | <a href="<c:url value='/excursions/search?name=${searchName}&categoryId=${searchCategoryId}&startDate=${searchStartDate}&endDate=${searchEndDate}&keyword=${searchKeyword}&page=${results.number + 1}' />">Suivant</a>
+            </c:if>
+        </p>
     </c:if>
 </c:if>
 

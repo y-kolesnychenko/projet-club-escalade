@@ -5,6 +5,7 @@ import com.yvan.projetclubescalade.service.CategoryService;
 import com.yvan.projetclubescalade.service.ExcursionService;
 import com.yvan.projetclubescalade.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -43,13 +44,14 @@ public class ExcursionController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(value = "endDate", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(value = "keyword", required = false) String keyword) {
+            @RequestParam(value = "keyword", required = false) String keyword,
+            Pageable pageable) {
 
         var mav = new ModelAndView("excursion-search");
         mav.addObject("categories", categoryService.findAll());
 
         if (name != null || categoryId != null || startDate != null || endDate != null || keyword != null) {
-            var results = excursionService.search(name, categoryId, startDate, endDate, keyword);
+            var results = excursionService.search(name, categoryId, startDate, endDate, keyword, pageable);
             mav.addObject("results", results);
             mav.addObject("searchName", name);
             mav.addObject("searchCategoryId", categoryId);

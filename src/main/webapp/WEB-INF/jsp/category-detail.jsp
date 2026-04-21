@@ -2,13 +2,13 @@
 <%@ include file="header.jsp" %>
 
 <h1><c:out value="${category.name}" /></h1>
-<p>${category.excursions.size()} sorties dans cette catégorie</p>
+<p>${excursionsPage.totalElements} sorties dans cette catégorie</p>
 
-<c:if test="${empty category.excursions}">
+<c:if test="${excursionsPage.totalElements == 0}">
     <p>Aucune sortie dans cette catégorie.</p>
 </c:if>
 
-<c:if test="${not empty category.excursions}">
+<c:if test="${excursionsPage.totalElements > 0}">
     <table border="1">
         <thead>
             <tr>
@@ -19,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            <c:forEach items="${category.excursions}" var="excursion">
+            <c:forEach items="${excursionsPage.content}" var="excursion">
                 <tr>
                     <td><c:out value="${excursion.name}" /></td>
                     <td><c:out value="${excursion.date}" /></td>
@@ -31,6 +31,26 @@
             </c:forEach>
         </tbody>
     </table>
+
+    <p>Page ${excursionsPage.number + 1} / ${excursionsPage.totalPages}</p>
+    <p>
+        <c:if test="${excursionsPage.number > 0}">
+            <a href="<c:url value='/categories/${category.id}?page=${excursionsPage.number - 1}' />">Précédent</a> |
+        </c:if>
+        <c:forEach begin="0" end="${excursionsPage.totalPages - 1}" var="i">
+            <c:choose>
+                <c:when test="${i == excursionsPage.number}">
+                    <strong>${i + 1}</strong>
+                </c:when>
+                <c:otherwise>
+                    <a href="<c:url value='/categories/${category.id}?page=${i}' />">${i + 1}</a>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+        <c:if test="${excursionsPage.number < excursionsPage.totalPages - 1}">
+            | <a href="<c:url value='/categories/${category.id}?page=${excursionsPage.number + 1}' />">Suivant</a>
+        </c:if>
+    </p>
 </c:if>
 
 <p><a href="<c:url value='/categories' />">Retour aux catégories</a></p>

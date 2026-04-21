@@ -3,6 +3,8 @@ package com.yvan.projetclubescalade.service;
 import com.yvan.projetclubescalade.dao.ExcursionDao;
 import com.yvan.projetclubescalade.model.Excursion;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,5 +53,15 @@ public class ExcursionServiceImpl implements ExcursionService{
     public List<Excursion> search(String name, Long categoryId,
                                   LocalDate startDate, LocalDate endDate, String keyword) {
         return excursionDao.search(name, categoryId, startDate, endDate, keyword);
+    }
+
+    @Override
+    public Page<Excursion> findByCategoryId(Long categoryId, Pageable pageable) {
+        return excursionDao.findByCategoryId(categoryId, pageable);
+    }
+
+    @Override
+    public Page<Excursion> search(String name, Long categoryId, LocalDate startDate, LocalDate endDate, String keyword, Pageable pageable) {
+        return excursionDao.search(name, categoryId, startDate, endDate, keyword, pageable);
     }
 }
