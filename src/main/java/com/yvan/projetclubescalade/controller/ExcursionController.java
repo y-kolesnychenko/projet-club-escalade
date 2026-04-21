@@ -4,10 +4,12 @@ import com.yvan.projetclubescalade.model.Excursion;
 import com.yvan.projetclubescalade.service.CategoryService;
 import com.yvan.projetclubescalade.service.ExcursionService;
 import com.yvan.projetclubescalade.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -85,23 +87,31 @@ public class ExcursionController {
     }
 
     @PostMapping("/create")
-    public String createSubmit(@ModelAttribute Excursion excursion,
+    public ModelAndView createSubmit(@ModelAttribute @Valid Excursion excursion,
+                                BindingResult result,
                                 @RequestParam("categoryId") Long categoryId,
                                 Principal principal,
                                 RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            var mav = new ModelAndView("excursion-form");
+            mav.addObject("categories", categoryService.findAll());
+            mav.addObject("isNew", true);
+            return mav;
+        }
+
         var member = memberService.findByEmail(principal.getName());
         if (member.isEmpty()) {
-            return "redirect:/";
+            return new ModelAndView("redirect:/");
         }
         var category = categoryService.findById(categoryId);
         if (category.isEmpty()) {
-            return "redirect:/excursions/create";
+            return new ModelAndView("redirect:/excursions/create");
         }
         excursion.setOrganizer(member.get());
         excursion.setCategory(category.get());
         excursionService.save(excursion);
         redirectAttributes.addFlashAttribute("successMessage", "Sortie créée avec succès !");
-        return "redirect:/excursions/my";
+        return new ModelAndView("redirect:/excursions/my");
     }
 
     @GetMapping("/edit/{id}")
@@ -121,25 +131,33 @@ public class ExcursionController {
     }
 
     @PostMapping("/edit/{id}")
-    public String editSubmit(@PathVariable("id") Long id,
-                              @ModelAttribute Excursion excursion,
+    public ModelAndView editSubmit(@PathVariable("id") Long id,
+                              @ModelAttribute @Valid Excursion excursion,
+                              BindingResult result,
                               @RequestParam("categoryId") Long categoryId,
                               Principal principal,
                               RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            var mav = new ModelAndView("excursion-form");
+            mav.addObject("categories", categoryService.findAll());
+            mav.addObject("isNew", false);
+            return mav;
+        }
+
         var existing = excursionService.findById(id);
         if (existing.isEmpty() || !existing.get().getOrganizer().getEmail().equals(principal.getName())) {
-            return "redirect:/excursions/my";
+            return new ModelAndView("redirect:/excursions/my");
         }
         var category = categoryService.findById(categoryId);
         if (category.isEmpty()) {
-            return "redirect:/excursions/edit/" + id;
+            return new ModelAndView("redirect:/excursions/edit/" + id);
         }
         excursion.setId(id);
         excursion.setOrganizer(existing.get().getOrganizer());
         excursion.setCategory(category.get());
         excursionService.save(excursion);
         redirectAttributes.addFlashAttribute("successMessage", "Sortie modifiée avec succès !");
-        return "redirect:/excursions/my";
+        return new ModelAndView("redirect:/excursions/my");
     }
 
     @PostMapping("/delete/{id}")

@@ -1,6 +1,8 @@
 package com.yvan.projetclubescalade.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -17,15 +19,18 @@ public class Excursion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Nom obligatoire")
     @Column(nullable = false)
     private String name;
 
+    @NotBlank(message = "Description obligatoire")
     @Column(nullable = false)
     private String description;
 
     @Column(nullable = true)
     private String webSite;
 
+    @NotNull(message = "Date de sortie obligatoire")
     @Column(nullable = false)
     private LocalDate date;
 

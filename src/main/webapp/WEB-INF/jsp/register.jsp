@@ -7,28 +7,39 @@
     <p style="color:red;"><c:out value="${errorMessage}" /></p>
 </c:if>
 
-<form action="<c:url value='/register' />" method="post">
-    <sec:csrfInput />
+<form:form method="POST" action="${pageContext.request.contextPath}/register" modelAttribute="member">
+
+    <form:errors path="*" cssStyle="color:red;" element="div" />
+
     <p>
         <label for="firstname">Prénom :</label><br>
-        <input type="text" id="firstname" name="firstname" required>
+        <form:input path="firstname" id="firstname" required="required" />
+        <form:errors path="firstname" cssStyle="color:red;" />
     </p>
+
     <p>
         <label for="lastname">Nom :</label><br>
-        <input type="text" id="lastname" name="lastname" required>
+        <form:input path="lastname" id="lastname" required="required" />
+        <form:errors path="lastname" cssStyle="color:red;" />
     </p>
+
     <p>
         <label for="email">Email :</label><br>
-        <input type="email" id="email" name="email" required>
+        <form:input path="email" id="email" type="email" required="required" />
+        <form:errors path="email" cssStyle="color:red;" />
     </p>
+
     <p>
         <label for="password">Mot de passe :</label><br>
-        <input type="password" id="password" name="password" required>
+        <form:password path="password" id="password" required="required" />
+        <form:errors path="password" cssStyle="color:red;" />
     </p>
+
     <p>
         <button type="submit">Créer le compte</button>
     </p>
-</form>
+
+</form:form>
 
 <p><a href="<c:url value='/login' />">Déjà un compte ? Se connecter</a></p>
 

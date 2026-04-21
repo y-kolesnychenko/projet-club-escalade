@@ -20,17 +20,20 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Prénom obligatoire")
     @Column(nullable = false)
     private String firstname;
 
+    @NotBlank(message = "Nom obligatoire")
     @Column(nullable = false)
     private String lastname;
 
     @Column(nullable = false, unique = true)
     @Email
-    @NotBlank
+    @NotBlank(message = "Email obligatoire")
     private String email;
 
+    @NotBlank(message = "Mot de passe obligatoire")
     @Column(nullable = false)
     private String password;
 

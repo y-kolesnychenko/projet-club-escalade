@@ -12,27 +12,32 @@
     </c:otherwise>
 </c:choose>
 
-<form action="${formAction}" method="post">
-    <sec:csrfInput />
+<form:form method="POST" action="${formAction}" modelAttribute="excursion">
+
+    <form:errors path="*" cssStyle="color:red;" element="div" />
 
     <p>
         <label for="name">Nom :</label><br>
-        <input type="text" id="name" name="name" value="<c:out value='${excursion.name}' />" required>
+        <form:input path="name" id="name" required="required" />
+        <form:errors path="name" cssStyle="color:red;" />
     </p>
 
     <p>
         <label for="description">Description :</label><br>
-        <textarea id="description" name="description" rows="4" cols="50" required><c:out value="${excursion.description}" /></textarea>
+        <form:textarea path="description" id="description" rows="4" cols="50" required="required" />
+        <form:errors path="description" cssStyle="color:red;" />
     </p>
 
     <p>
         <label for="webSite">Site web :</label><br>
-        <input type="url" id="webSite" name="webSite" value="<c:out value='${excursion.webSite}' />">
+        <form:input path="webSite" id="webSite" />
+        <form:errors path="webSite" cssStyle="color:red;" />
     </p>
 
     <p>
         <label for="date">Date :</label><br>
-        <input type="date" id="date" name="date" value="${excursion.date}" required>
+        <form:input path="date" id="date" type="date" required="required" />
+        <form:errors path="date" cssStyle="color:red;" />
     </p>
 
     <p>
@@ -56,6 +61,7 @@
         </button>
         <a href="<c:url value='/excursions/my' />">Annuler</a>
     </p>
-</form>
+
+</form:form>
 
 <%@ include file="footer.jsp" %>

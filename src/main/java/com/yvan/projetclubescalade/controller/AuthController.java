@@ -4,13 +4,16 @@ import com.yvan.projetclubescalade.model.Member;
 import com.yvan.projetclubescalade.service.MemberService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -49,8 +52,12 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public String handleForgotPassword(@RequestParam("email") String email,
                                         RedirectAttributes redirectAttributes) {
-        Optional<Member> memberOpt = memberService.findByEmail(email);
+        if (email == null || email.isBlank()){
+            redirectAttributes.addFlashAttribute("errorMessage", "Email obligatoire");
+            return "redirect:/forgot-password";
+        }
 
+        Optional<Member> memberOpt = memberService.findByEmail(email);
         if (memberOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Aucun compte trouvé avec cet email.");
             return "redirect:/forgot-password";
@@ -90,28 +97,28 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String handleRegister(@RequestParam("firstname") String firstname,
-                                 @RequestParam("lastname") String lastname,
-                                 @RequestParam("email") String email,
-                                 @RequestParam("password") String password,
-                                 RedirectAttributes redirectAttributes,
-                                 HttpServletRequest request) {
-        if (memberService.findByEmail(email).isPresent()){
-            redirectAttributes.addFlashAttribute("errorMessage", "Un compte existe déjà avec cet email.");
-            return "redirect:/register";
+    public ModelAndView handleRegister(@ModelAttribute @Valid Member member,
+                                  BindingResult result,
+                                  HttpServletRequest request,
+                                  RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()){
+            return new ModelAndView("register");
         }
 
-        Member member = new Member();
-        member.setFirstname(firstname);
-        member.setLastname(lastname);
-        member.setEmail(email);
-        member.setPassword(password);
-        memberService.register(member);
-        try {
-            request.login(email, password);
-        } catch (ServletException e) {
-            log.error("Erreur connexion auto : ", e);
+        if (memberService.findByEmail(member.getEmail()).isPresent()) {
+            result.rejectValue("email", "email.exists", "Email déjà utilisé");
+            return new ModelAndView("register");
         }
-        return "redirect:/";
+
+        String rawPassword = member.getPassword();
+        memberService.register(member);
+
+        try {
+            request.login(member.getEmail(), rawPassword);
+        } catch (Exception e) {
+            log.error("Erreur lors de la connexion automatique", e);
+        }
+
+        return new ModelAndView("redirect:/");
     }
 }
