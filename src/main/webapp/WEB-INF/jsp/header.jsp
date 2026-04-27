@@ -58,9 +58,9 @@
                 </sec:authorize>
                 <sec:authorize access="isAuthenticated()">
                     <li class="nav-item">
-                        <span class="nav-link text-light">
+                        <a class="nav-link" href="<c:url value='/account' />">
                             <i class="bi bi-person-circle"></i> <sec:authentication property="name" />
-                        </span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <c:url var="logoutUrl" value="/logout" />
